@@ -5,6 +5,10 @@
         "logger": {
             "enabled": true,
             "level": "info"
+        },
+        "auth": {
+            "key": "some-key",
+            "tokenExpiresIn": "20000000"
         }
     }
 }
