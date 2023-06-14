@@ -1,34 +1,14 @@
 import { Response } from 'express';
-import logger from '@src/utils/logger';
 import ApiError, { APIError } from '@src/utils/errors/api-error';
-import { DatabaseError, DatabaseUnknownClientError, DatabaseValidationError } from '@src/repositories/repository';
+
 
 export abstract class BaseController {
-    protected sendCreateUpdateErrorResponse(res: Response, error: unknown): void {
-        if (error instanceof DatabaseValidationError || error instanceof DatabaseUnknownClientError) {
-            const clientErrors = this.handleClientErrors(error);
-            res.status(clientErrors.code).send(
-                ApiError.format({
-                    code: clientErrors.code,
-                    message: clientErrors.error
-                })
-            );
-        } else {
-            logger.error(JSON.stringify(error));
-            res.status(500).send(ApiError.format({ code: 500, message: 'Something went wrong!' }));
-        }
-    }
-
-    private handleClientErrors(error: DatabaseError): { code: number, error: string } {
-        if (error instanceof DatabaseValidationError) {
-            return { code: 400, error: error.message };
-        }
-        return { code: 400, error: error.message };
-
-    }
+  
+    public abstract create(req: Request, res: Response): Promise<void>;
+    public abstract getAll(req: Request, res: Response): Promise<Response>;
+    public abstract findById(req: Request, res: Response): Promise<Response>;
 
     protected sendErrorResponse(res: Response, apiError: APIError): Response {
         return res.status(apiError.code).send(ApiError.format(apiError));
     }
-
 }
