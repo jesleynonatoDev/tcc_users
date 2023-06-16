@@ -1,27 +1,26 @@
-import { Document, Schema, model } from 'mongoose';
-import { UserInterface } from '@src/interfaces/userInterface';
+import mongoose from 'mongoose';
 
-export interface UserModelInterface extends UserInterface, Document {
-    fullName(): string;
-}
-
-export const schema: Schema = new Schema({
-    createAt: Date,
-    email: String,
-    firstName: String,
-    lastName: String,
-    userName: String
+const userSchema = new mongoose.Schema({
+  firstName: {
+    type: String,
+    required: true,
+  },
+  lastName: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+  },
+  userName: {
+    type: String,
+    required: true
+  },
+  date: {
+    type: Date,
+    default: Date.now(),
+  },
 });
 
-schema.pre('save', (next) => {
-  const now = new Date();
-  if (!this.createAt) {
-    this.createAt = now;
-  }
-  next();
-});
-schema.methods.fullName = (): string => {
-  return `${this.firstName} ${this.lastName}`;
-};
-
-export const UserModel = model('User', schema)
+export const UserModel = mongoose.model('user', userSchema);

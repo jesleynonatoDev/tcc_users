@@ -8,7 +8,10 @@ router.get('/', (req, res) => {
   res.send('hello word');
 });
 
-router.get('/users', controller.list);
-router.post('/users', controller.create)
+router.get('/users', controller.getAll);
+router.get('/users/:id', controller.get);
+router.post('/users', controller.create);
+router.put('/users/:id', controller.update);
+router.delete('/users/:id', controller.delete)
 
 export { router };

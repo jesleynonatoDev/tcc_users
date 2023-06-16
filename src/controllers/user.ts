@@ -1,21 +1,16 @@
-import ApiError, { APIError } from '@src/utils/errors/api-error';
+import ApiError from '@src/utils/errors/api-error';
 import { Response, Request } from 'express';
 import logger from '@src/utils/logger';
-import { UserModel } from '@src/models/user';
 
-import * as mock from '@src/mock/users.json'
+import * as mock from '@src/mock/users.json';
+import { UserService } from '@src/services/userService';
+import { UserInterface } from '@src/interfaces/userInterface';
 
 export class UserController {
-    public async create(req: Request, res: Response): Promise<void> {
-      const { userName, email, firstName, lastName } = req.body
-      try {
-        const user = await UserModel.create({
-          userName: userName,
-          email: email,
-          firstName: firstName,
-          lastName: lastName,
-        });
-      res.status(200).send(user);
+  public async create(req: Request, res: Response): Promise<void> {
+    try {
+      const createdUser = await UserService.addUser(req.body);
+      res.status(200).send(createdUser);
     } catch (err) {
       logger.error(JSON.stringify(err));
       res
@@ -23,22 +18,66 @@ export class UserController {
         .send(ApiError.format({ code: 500, message: 'Something went wrong!' }));
     }
   }
-  public async list(req: Request, res: Response): Promise<Response> {
-    const user = await UserModel.find(req.body, req.body, { skip: 10, limit: 25});
-    if (!user) {
+  public async getAll(req: Request, res: Response): Promise<Response> {
+    try {
+      const listAllUsers = await UserService.getAll();
+      if (!listAllUsers) {
+        return res
+          .status(400)
+          .send(ApiError.format({ code: 400, message: 'Not finded users!' }));
+      }
+      return res.status(200).send({ listAllUsers });
+    } catch (err) {
       logger.error('Something went wrong');
       return res
         .status(500)
         .send(ApiError.format({ code: 500, message: 'Something went wrong!' }));
     }
-    return res.status(200).send({ user });
   }
 
-  public async findById(req: Request, res: Response): Promise<Response> {
-    const userSearchById = req.body;
+  public async get(req: Request, res: Response): Promise<Response> {
+    const userSearchedById = req.params.id;
     try {
-      const userFinded = await UserModel.findById(userSearchById).exec();
+      const userFinded = await UserService.getUserById(userSearchedById);
       return res.status(200).send({ userFinded });
+    } catch (err) {
+      logger.error(JSON.stringify(err));
+      return res
+        .status(500)
+        .send(ApiError.format({ code: 500, message: 'Something went wrong!' }));
+    }
+  }
+
+  public async update(req: Request, res: Response): Promise<Response> {
+    const userId = req.params.id;
+
+    try {
+      const user: Partial<UserInterface> = {
+        email: req.body.email,
+        firstName: req.body.firstName,
+        lastName: req.body.lastName
+      }
+      const updateUser = await UserService.update(userId, user);
+      if (updateUser.modifiedCount === 0) {
+        return res
+          .status(400)
+          .send(ApiError.format({ code: 400, message: 'Not updated users!' }));
+      }
+      return res.status(200).send({ updateUser });
+    } catch (err) {
+      logger.error(JSON.stringify(err));
+      return res
+        .status(500)
+        .send(ApiError.format({ code: 500, message: 'Something went wrong!' }));
+    }
+
+  }
+
+  public async delete(req: Request, res: Response): Promise<Response> {
+    const userId: string = req.params.id;
+    try {
+      const deleteReponse = await UserService.delete(userId);
+      return res.status(200).send({ deleteReponse });
     } catch (err) {
       logger.error(JSON.stringify(err));
       return res
@@ -65,6 +104,4 @@ export class UserController {
     }
     return res.send({ user });
   }
-
-
 }

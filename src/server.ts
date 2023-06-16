@@ -4,6 +4,7 @@ import express from 'express';
 import expressPino from 'express-pino-logger';
 import logger from './utils/logger';
 import { router } from './router';
+import { db } from '@src/infra/db.config';
 
 export class Server {
   public server: express.Application;
@@ -12,6 +13,7 @@ export class Server {
     this.server = express();
     this.middlewares();
     this.router();
+    db.init();
   }
 
   private middlewares(): void {
@@ -27,6 +29,8 @@ export class Server {
       })
     );
   }
+
+
 
   private router(): void {
     this.server.use(router);
