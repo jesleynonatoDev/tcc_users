@@ -5,6 +5,10 @@ import expressPino from 'express-pino-logger';
 import logger from './utils/logger';
 import { router } from './router';
 import { db } from '@src/infra/db.config';
+import swaggerUi from 'swagger-ui-express';
+import * as OpenApiValidator from 'express-openapi-validator';
+import { OpenAPIV3 } from 'express-openapi-validator/dist/framework/types';
+import apiSchema from './api-schema.json';
 
 export class Server {
   public server: express.Application;
@@ -12,6 +16,7 @@ export class Server {
   constructor(private port = 3000) {
     this.server = express();
     this.middlewares();
+    this.docSetup();
     this.router();
     db.init();
   }
@@ -30,6 +35,16 @@ export class Server {
     );
   }
 
+  private async docSetup(): Promise<void> {
+    this.server.use('/docs', swaggerUi.serve, swaggerUi.setup(apiSchema));
+    this.server.use(
+      OpenApiValidator.middleware({
+        apiSpec: apiSchema as OpenAPIV3.Document,
+        validateRequests: true,
+        validateResponses: true
+      })
+    )
+  }
 
 
   private router(): void {

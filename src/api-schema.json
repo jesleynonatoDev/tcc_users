@@ -1,0 +1,388 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "version": "1.0.0",
+    "title": "POC for tcc",
+    "description": "User API",
+    "termsOfService": "http://api_url/terms/",
+    "license": {
+      "name": "Apache 2.0",
+      "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "paths": {
+    "/users": {
+      "post": {
+        "description": "Create a new User",
+        "operationId": "createUser",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "The user has been created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserCreatedResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "message": "Invalid parameters",
+                  "code": "400",
+                  "error": "Bad Request"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "message": "Conflict",
+                  "code": "409",
+                  "error": "Conflict"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "description": "Get all users",
+        "operationId": "getAllUsers",
+        "responses": {
+          "200": {
+            "description": "List all users ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsersListResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not finded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "message": "Not results",
+                  "code": "404",
+                  "error": "Not founded"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "description": "Get user by id",
+        "operationId": "findUserById",
+        "responses": {
+          "200": {
+            "description": "User has finded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetUserReponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not finded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "message": "Not results",
+                  "code": "404",
+                  "error": "Not founded"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "description": "Update data user",
+        "operationId": "updateUser",
+        "responses": {
+          "200": {
+            "description": "Data user has updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdatedUserReponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not finded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "message": "Not results",
+                  "code": "404",
+                  "error": "Not founded"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+      "description": "Delete user",
+        "operationId": "deleteUser",
+        "responses": {
+          "200": {
+            "description": "User has deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteUserReponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not finded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "message": "Not results",
+                  "code": "404",
+                  "error": "Not founded"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "fisrtName": {
+        "type": "string",
+        "example": "John"
+      },
+      "lastName": {
+        "type": "string",
+        "example": "Doe"
+      },
+      "userName": {
+        "type": "string",
+        "example": "john.doe"
+      },
+      "email": {
+        "type": "string",
+        "example": "john.doe@mail.com"
+      },
+      "id": {
+        "type": "string",
+        "example": "5e8131eba7768d9e4f06c884"
+      },
+      "date": {
+        "type": "string",
+        "format": "date",
+        "example": "Tue Jun 20 2023 17:48:49 GMT-0300 (Horário Padrão de Brasília)" 
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/name"
+          },
+          "email": {
+            "$ref": "#/components/schemas/email"
+          }
+        }
+      },
+      "UserCreatedResponse": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "type": "object",
+            "properties": {
+              "fisrtName": {
+                "$ref": "#/components/schemas/fisrtName"
+              },
+              "lastName": {
+                "$ref": "#/components/schemas/lastName"
+              },
+              "userName": {
+                "$ref": "#/components/schemas/userName"
+              },
+              "email": {
+                "$ref": "#/components/schemas/email"
+              },
+              "id": {
+                "$ref": "#/components/schemas/id"
+              }
+            }
+          }
+        }
+      },
+      "UsersListResponse": {
+        "type": "object",
+        "properties": {
+          "listAllUsers": {
+            "type": "object",
+            "properties": {
+              "fisrtName": {
+                "$ref": "#/components/schemas/fisrtName"
+              },
+              "lastName": {
+                "$ref": "#/components/schemas/lastName"
+              },
+              "userName": {
+                "$ref": "#/components/schemas/userName"
+              },
+              "email": {
+                "$ref": "#/components/schemas/email"
+              },
+              "id": {
+                "$ref": "#/components/schemas/id"
+              }
+            }
+          } 
+        }
+      },
+      "GetUserReponse": {
+        "type": "object",
+        "properties": {
+          "getUser": {
+            "type": "object",
+            "properties": {
+              "fisrtName": {
+                "$ref": "#/components/schemas/fisrtName"
+              },
+              "lastName": {
+                "$ref": "#/components/schemas/lastName"
+              },
+              "userName": {
+                "$ref": "#/components/schemas/userName"
+              },
+              "email": {
+                "$ref": "#/components/schemas/email"
+              },
+              "id": {
+                "$ref": "#/components/schemas/id"
+              }
+            }
+          }
+        }
+      },
+      "UpdatedUserReponse": {
+        "type": "object",
+        "properties": {
+          "getUser": {
+            "type": "object",
+            "properties": {
+              "fisrtName": {
+                "$ref": "#/components/schemas/fisrtName"
+              },
+              "lastName": {
+                "$ref": "#/components/schemas/lastName"
+              },
+              "userName": {
+                "$ref": "#/components/schemas/userName"
+              },
+              "email": {
+                "$ref": "#/components/schemas/email"
+              },
+              "id": {
+                "$ref": "#/components/schemas/id"
+              },
+              "date": {
+                "$ref": "#/components/schemas/date"
+              }
+            }
+          }
+        }
+      },
+      "DeleteUserReponse": {
+        "type": "object",
+        "properties": {
+          "getUser": {
+            "type": "object",
+            "properties": {
+              "fisrtName": {
+                "$ref": "#/components/schemas/fisrtName"
+              },
+              "lastName": {
+                "$ref": "#/components/schemas/lastName"
+              },
+              "userName": {
+                "$ref": "#/components/schemas/userName"
+              },
+              "email": {
+                "$ref": "#/components/schemas/email"
+              },
+              "id": {
+                "$ref": "#/components/schemas/id"
+              }
+            }
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "code": {
+            "type": "number"
+          },
+          "error": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "documentation": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

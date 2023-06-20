@@ -11,8 +11,10 @@ export class UserService {
         email: userData.email,
         date: new Date(),
       };
-      console.log('userData: ', newUser);
       const response = await new UserModel(newUser).save();
+      if (!response) {
+        return new Error("Something is wrong");
+      }
       return response;
     } catch (err) {
       return err;

@@ -10,7 +10,7 @@ export class UserController {
   public async create(req: Request, res: Response): Promise<void> {
     try {
       const createdUser = await UserService.addUser(req.body);
-      res.status(200).send(createdUser);
+      res.status(201).send(createdUser);
     } catch (err) {
       logger.error(JSON.stringify(err));
       res
@@ -43,8 +43,8 @@ export class UserController {
     } catch (err) {
       logger.error(JSON.stringify(err));
       return res
-        .status(500)
-        .send(ApiError.format({ code: 500, message: 'Something went wrong!' }));
+        .status(404)
+        .send(ApiError.format({ code: 404, message: 'Something went wrong!' }));
     }
   }
 
@@ -76,8 +76,8 @@ export class UserController {
   public async delete(req: Request, res: Response): Promise<Response> {
     const userId: string = req.params.id;
     try {
-      const deleteReponse = await UserService.delete(userId);
-      return res.status(200).send({ deleteReponse });
+      const deleteUser = await UserService.delete(userId);
+      return res.status(200).send({ deleteUser });
     } catch (err) {
       logger.error(JSON.stringify(err));
       return res
