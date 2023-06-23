@@ -8,6 +8,7 @@ import { UserInterface } from '@src/interfaces/userInterface';
 
 export class UserController {
   public async create(req: Request, res: Response): Promise<void> {
+    logger.info('Request received')
     try {
       const createdUser = await UserService.addUser(req.body);
       res.status(201).send(createdUser);
