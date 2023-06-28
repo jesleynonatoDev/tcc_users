@@ -21,13 +21,14 @@ export class UserController {
   }
   public async getAll(req: Request, res: Response): Promise<Response> {
     try {
-      const listAllUsers = await UserService.getAll();
-      if (!listAllUsers) {
+      const getAllUsers = await UserService.getAll();
+      if (!getAllUsers) {
         return res
           .status(400)
           .send(ApiError.format({ code: 400, message: 'Not finded users!' }));
       }
-      return res.status(200).send({ listAllUsers });
+      logger.info(typeof getAllUsers, getAllUsers);
+      return res.status(200).json({ data: getAllUsers });
     } catch (err) {
       logger.error('Something went wrong');
       return res
@@ -40,7 +41,7 @@ export class UserController {
     const userSearchedById = req.params.id;
     try {
       const userFinded = await UserService.getUserById(userSearchedById);
-      return res.status(200).send({ userFinded });
+      return res.status(200).json({ data: userFinded });
     } catch (err) {
       logger.error(JSON.stringify(err));
       return res
@@ -64,7 +65,7 @@ export class UserController {
           .status(400)
           .send(ApiError.format({ code: 400, message: 'Not updated users!' }));
       }
-      return res.status(200).send({ updateUser });
+      return res.status(200).json({ data: updateUser });
     } catch (err) {
       logger.error(JSON.stringify(err));
       return res
@@ -78,7 +79,7 @@ export class UserController {
     const userId: string = req.params.id;
     try {
       const deleteUser = await UserService.delete(userId);
-      return res.status(200).send({ deleteUser });
+      return res.status(200).send({ data: deleteUser });
     } catch (err) {
       logger.error(JSON.stringify(err));
       return res
@@ -103,6 +104,6 @@ export class UserController {
         .status(500)
         .send(ApiError.format({ code: 500, message: 'Something went wrong!' }));
     }
-    return res.send({ user });
+    return res.json({ data: user });
   }
 }
