@@ -1,28 +1,29 @@
 version: '3'
 
 services:
-  db:
+  db_users:
     image: mongo:4.2
-    container_name: db
+    command: mongod --port ${DB_PORT}
+    container_name: db_users
     restart: always
     ports:
-      - ${DB_PORT}:27017
+      - ${DB_PORT}:${DB_PORT}
     environment:
       MONGO_INITDB_DATABASE: ${DB_NAME}
       MONGO_INITDB_ROOT_USERNAME: ${DB_USER}
       MONGO_INITDB_ROOT_PASSWORD: ${DB_PASS}
 
-  application_users:
+  app_users:
     command: npm start
     build: .
     env_file:
       - .env
     depends_on:
-      - db
+      - db_users
     links:
-      - db
+      - db_users
     ports:
-     - "3001:3000"
+     - ${SERVER_PORT}:3000
     volumes:
       - .:/app
     logging:
